@@ -117,10 +117,10 @@ export default function Home() {
                 <Link href="https://twitter.com" target="_blank" className="text-white/60 hover:text-white transition-colors">
                   <FaTwitter size={14} />
                 </Link>
-                <Link href="https://instagram.com" target="_blank" className="text-white/60 hover:text-white transition-colors">
+                <Link href="https://www.instagram.com/peachmango.jus/" target="_blank" className="text-white/60 hover:text-white transition-colors">
                   <FaInstagram size={14} />
                 </Link>
-                <Link href="https://linkedin.com" target="_blank" className="text-white/60 hover:text-white transition-colors">
+                <Link href="https://www.linkedin.com/in/juster-ureta/" target="_blank" className="text-white/60 hover:text-white transition-colors">
                   <FaLinkedin size={14} />
                 </Link>
               </div>
@@ -160,8 +160,8 @@ export default function Home() {
                 <div className="relative h-full flex flex-col justify-between p-8">
                   <div>
                     <p className="text-xs uppercase tracking-widest text-white/40 mb-3">Project {project}</p>
-                    <h3 className="text-2xl font-bold mb-4">Project Title</h3>
-                    <p className="text-white/60 text-sm">Brief description of the project goes here with key features.</p>
+                    <h3 className="text-2xl font-bold mb-4">Safe Drive</h3>
+                    <p className="text-white/60 text-sm">Web-based system for a traffic regulatory department</p>
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     <span className="px-3 py-1 text-xs border border-white/10 text-white/60 rounded-full">Design</span>
@@ -210,7 +210,7 @@ export default function Home() {
               <Link href="https://github.com/Strixyl" target="_blank" className="text-white/40 hover:text-white transition-colors">
                 <FaGithub size={28} />
               </Link>
-              <Link href="https://linkedin.com" target="_blank" className="text-white/40 hover:text-white transition-colors">
+              <Link href="https://www.linkedin.com/in/juster-ureta/" target="_blank" className="text-white/40 hover:text-white transition-colors">
                 <FaLinkedin size={28} />
               </Link>
               <Link href="mailto:uretajuster@gmail.com" className="text-white/40 hover:text-white transition-colors">
@@ -226,7 +226,7 @@ export default function Home() {
         <Link href="https://github.com/Strixyl" target="_blank" className="text-white/40 hover:text-white transition-colors">
           <FaGithub size={20} />
         </Link>
-        <Link href="https://linkedin.com" target="_blank" className="text-white/40 hover:text-white transition-colors">
+        <Link href="https://www.linkedin.com/in/juster-ureta/" target="_blank" className="text-white/40 hover:text-white transition-colors">
           <FaLinkedin size={20} />
         </Link>
         <Link href="mailto:uretajuster@gmail.com" className="text-white/40 hover:text-white transition-colors">
