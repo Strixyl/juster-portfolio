@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Juster - Portfolio",
-  description: "Web & Mobile Design Expert",
+export const metadata = {
+  title: "JUSTER | Independent Brand Studio",
+  description: "Designer for brands that refuse to blend in.",
 };
 
 export default function RootLayout({
@@ -12,8 +11,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className="dark">
+      <body className="antialiased overflow-x-hidden bg-[#121316] text-[#e3e2e6]">
+        {children}
+      </body>
     </html>
   );
 }
