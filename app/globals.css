@@ -65,3 +65,12 @@ body {
 .carousel-track:hover {
   animation-play-state: paused;
 }
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse 25s linear infinite;
+}

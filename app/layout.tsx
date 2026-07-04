@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "JUSTER | Independent Brand Studio",
+  title: "JUSTER | Frontend Developer",
   description: "Designer for brands that refuse to blend in.",
 };
 

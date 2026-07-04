@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
+
   useEffect(() => {
+    // Smooth scrolling logic
     const handleScrollClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest("a");
@@ -18,81 +21,106 @@ export default function Home() {
       }
     };
 
+    // Auto-hide header on scroll logic
+    const handleScrollVisibility = () => {
+      if (window.scrollY > 20) {
+        setIsHeaderVisible(false);
+      } else {
+        setIsHeaderVisible(true);
+      }
+    };
+
     document.addEventListener("click", handleScrollClick);
+    window.addEventListener("scroll", handleScrollVisibility);
+    
     return () => {
       document.removeEventListener("click", handleScrollClick);
+      window.removeEventListener("scroll", handleScrollVisibility);
     };
   }, []);
 
   return (
-    <div className="relative min-h-screen selection:bg-primary selection:text-surface">
-      {/* Navigation Header */}
-      <header className="sticky top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30">
-        <nav className="flex justify-between items-center px-6 lg:px-[80px] py-4 md:py-6 max-w-container-max mx-auto">
-          <div className="text-[20px] md:text-[32px] tracking-tighter text-on-surface font-extrabold flex-1">
+    <div className="relative min-h-screen bg-[#121316] text-white selection:bg-primary selection:text-surface">
+      
+      {/* Header Fixed & Layout aligned verbatim to image_af73aa.png */}
+      <header className={`fixed top-0 w-full z-50 bg-[#121316]/90 backdrop-blur-xl border-b border-white/5 transition-all duration-500 ease-in-out ${
+        isHeaderVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
+      }`}>
+        <nav className="flex justify-between items-center px-6 lg:px-[80px] py-4 max-w-container-max mx-auto h-[70px]">
+          {/* Left: Condensed Tall Name Logo matching image_af73aa.png */}
+          <div className="text-[26px] md:text-[32px] tracking-tighter text-white font-black uppercase leading-none scale-y-110 origin-left font-sans select-none flex-1">
             JUSTER
           </div>
-          <div className="flex-1 text-center hidden md:block">
-            <a className="text-[14px] uppercase text-primary font-bold tracking-widest" href="#works">
+          
+          {/* Center Links stacked matching image_af73aa.png */}
+          <div className="flex flex-col items-center justify-center text-center space-y-0.5 flex-1 hidden md:flex">
+            <a className="text-[10px] uppercase tracking-[0.25em] text-white font-bold hover:text-primary transition-colors" href="#works">
               PORTFOLIO
             </a>
+            <a className="text-[10px] uppercase tracking-[0.25em] text-white/40 font-bold hover:text-white transition-colors" href="#stacks">
+              STACKS
+            </a>
           </div>
-          <div className="flex-1 text-right hidden md:block">
-            <a className="px-6 py-2 bg-secondary-container text-on-surface text-[14px] uppercase hover:bg-surface-bright/20 transition-all duration-400" href="#footer">
-              Contact
+          
+          {/* Right Links stacked matching image_af73aa.png */}
+          <div className="flex flex-col items-end text-right text-[10px] uppercase tracking-[0.25em] font-bold flex-1 hidden md:flex">
+            <span className="text-white/30 tracking-[0.3em] font-medium">STUDIO</span>
+            <a className="text-white hover:text-primary transition-colors" href="#footer">
+              CONTACT
             </a>
           </div>
         </nav>
       </header>
 
-      {/* Hero Intro Section with Local Video Layer */}
+      {/* Hero Intro Section */}
       <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-[#121316]">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0 opacity-40 scale-105"
-          src="/videoholder.mp4"
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline 
+          className="absolute inset-0 w-full h-full object-cover z-0 opacity-25 scale-105"
+          src="/videoholder.mp4" 
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#121316] via-[#121316]/70 to-[#121316]/40 z-10" />
-
+        
         <div className="relative z-20 text-center px-6 md:px-0">
-          <p className="text-[14px] uppercase tracking-[0.3em] mb-8 opacity-80 text-primary font-mono">Ideas Made Visible</p>
-          <h1 className="text-4xl md:text-7xl text-white max-w-4xl mx-auto mb-12 font-extrabold leading-tight tracking-tight">
-            Designer for brands that <span className="italic font-light text-primary">refuse</span> to blend in.
+          <p className="text-[14px] uppercase tracking-[0.3em] mb-8 opacity-80 text-primary font-mono">Frontend Developer</p>
+          <h1 className="text-3xl md:text-5xl text-white max-w-5xl mx-auto mb-12 font-medium leading-relaxed tracking-tight opacity-95">
+            A frontend developer who builds fast, responsive websites and turns complex user interfaces into{" "}
+            <span className="italic text-primary font-medium">clean, friendly experiences.</span>
           </h1>
           <div className="flex flex-col items-center gap-6">
             <a className="group relative px-10 py-4 border border-white/30 backdrop-blur-md overflow-hidden transition-all duration-500 hover:border-white" href="#works">
-              <span className="relative z-10 text-[14px] uppercase text-white group-hover:text-surface transition-colors duration-500 font-bold tracking-wider">Work With Me</span>
+              <span className="relative z-10 text-[14px] uppercase text-white group-hover:text-[#121316] transition-colors duration-500 font-bold tracking-wider">See My Work</span>
               <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
             </a>
-            <p className="text-[10px] tracking-widest opacity-50 uppercase font-mono">Scroll to discover</p>
+            <p className="text-[10px] tracking-widest opacity-50 uppercase font-mono">Explore projects below</p>
           </div>
         </div>
       </section>
 
-      {/* Studio Philosophy Statement — CLEANED & PUNCHIER */}
-      <section className="py-[120px] md:py-[180px] px-6 lg:px-[80px] max-w-container-max mx-auto text-center border-b border-outline-variant/10">
+      {/* Studio Philosophy Statement */}
+      <section className="py-[120px] md:py-[180px] px-6 lg:px-[80px] max-w-container-max mx-auto text-center border-b border-white/5">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-5xl mb-12 leading-snug tracking-tight font-medium text-on-surface">
-            &ldquo;Building digital spaces where <span className="italic text-primary">exceptional form </span> meets intuitive function. No noise. No template fluff. Just design that demands attention.&rdquo;
+          <h2 className="text-3xl md:text-5xl mb-12 leading-snug tracking-tight font-medium text-white">
+            &ldquo;Building digital spaces where <span className="italic text-primary">exceptional form</span> meets intuitive function. No noise. No template fluff. Just design that demands attention.&rdquo;
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left mt-24">
             <div className="space-y-3">
               <span className="text-[13px] text-primary font-mono tracking-widest block">// 01 / IDENTITY</span>
               <h3 className="text-xl font-bold tracking-tight">Precision</h3>
-              <p className="text-on-surface-variant text-sm leading-relaxed">Meticulous attention to every pixel and transition, ensuring a seamless digital performance.</p>
+              <p className="text-white/60 text-sm leading-relaxed">Meticulous attention to every pixel and transition, ensuring a seamless digital performance.</p>
             </div>
             <div className="space-y-3">
               <span className="text-[13px] text-primary font-mono tracking-widest block">// 02 / EXPERIENCE</span>
               <h3 className="text-xl font-bold tracking-tight">Intuition</h3>
-              <p className="text-on-surface-variant text-sm leading-relaxed">Creating interfaces that users understand instinctively, reducing friction and increasing joy.</p>
+              <p className="text-white/60 text-sm leading-relaxed">Creating interfaces that users understand instinctively, reducing friction and increasing joy.</p>
             </div>
             <div className="space-y-3">
               <span className="text-[13px] text-primary font-mono tracking-widest block">// 03 / SYSTEM</span>
               <h3 className="text-xl font-bold tracking-tight">Inclusivity</h3>
-              <p className="text-on-surface-variant text-sm leading-relaxed">Design that speaks to everyone, regardless of ability or device, ensuring no user is left behind.</p>
+              <p className="text-white/60 text-sm leading-relaxed">Design that speaks to everyone, regardless of ability or device, ensuring no user is left behind.</p>
             </div>
           </div>
         </div>
@@ -106,10 +134,10 @@ export default function Home() {
             <h2 className="text-4xl font-bold mt-4">Selected Works</h2>
           </div>
           <div className="hidden md:block">
-            <span className="text-[14px] text-on-surface-variant/40 font-mono">2024–NOW</span>
+            <span className="text-[14px] text-white/40 font-mono">2024–NOW</span>
           </div>
         </div>
-
+        
         <div className="relative w-full">
           <div className="carousel-track gap-8 px-8">
             {[
@@ -118,66 +146,24 @@ export default function Home() {
               { id: "03", title: "Project Space Three", tags: "COMING SOON", url: "#", img: null },
               { id: "04", title: "Project Space Four", tags: "COMING SOON", url: "#", img: null },
               { id: "05", title: "Project Space Five", tags: "COMING SOON", url: "#", img: null }
-            ].map((item, index) => (
-              <a
-                key={index}
-                href={item.url}
-                target={item.url !== "#" ? "_blank" : undefined}
-                rel="noopener noreferrer"
+            ].map((item, index) => (   
+              <a 
+                key={index} 
+                href={item.url} 
+                target={item.url !== "#" ? "_blank" : undefined} 
+                rel="noopener noreferrer" 
                 className="w-[300px] md:w-[450px] shrink-0 space-y-4 opacity-40 hover:opacity-100 transition-opacity duration-300 block group"
               >
-                <div className="aspect-video bg-surface-container-highest/40 border border-outline-variant/20 relative flex items-center justify-center overflow-hidden">
+                <div className="aspect-video bg-white/5 border border-white/10 relative flex items-center justify-center overflow-hidden">
                   <span className="absolute top-4 right-6 text-sm opacity-50 font-mono group-hover:text-primary transition-colors z-20">{item.id}</span>
-
-                  {item.img ? (
-                    <img
-                      src={item.img}
-                      alt={item.title}
+                  {item.img && (
+                    <img 
+                      src={item.img} 
+                      alt={item.title} 
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100 z-10"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = 'none';
-                      }}
+                      onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
                     />
-                  ) : null}
-
-                  <span className="text-[11px] tracking-[0.2em] uppercase font-mono opacity-30 group-hover:scale-105 transition-transform duration-500 z-20">
-                    {item.url !== "#" ? "View Live Project ↗" : "In Development"}
-                  </span>
-                </div>
-                <div className="flex justify-between items-baseline px-2">
-                  <h3 className="text-lg md:text-xl font-semibold tracking-tight group-hover:text-primary transition-colors">{item.title}</h3>
-                  <span className="text-[10px] opacity-60 font-mono tracking-wider">{item.tags}</span>
-                </div>
-              </a>
-            ))}
-            {[
-              { id: "01", title: "Traffic Management System", tags: "FRONTEND // ARCHITECTURE", url: "https://traffic-management-system-cyan.vercel.app/", img: "/images/tms.png" },
-              { id: "02", title: "Breeders Enterprise", tags: "FRONTEND // UI EXECUTION", url: "https://www.breedersenterprise.com/", img: "/images/bea.png" },
-              { id: "03", title: "Project Space Three", tags: "COMING SOON", url: "#", img: null },
-              { id: "04", title: "Project Space Four", tags: "COMING SOON", url: "#", img: null },
-              { id: "05", title: "Project Space Five", tags: "COMING SOON", url: "#", img: null }
-            ].map((item, index) => (
-              <a
-                key={`dup-${index}`}
-                href={item.url}
-                target={item.url !== "#" ? "_blank" : undefined}
-                rel="noopener noreferrer"
-                className="w-[300px] md:w-[450px] shrink-0 space-y-4 opacity-40 hover:opacity-100 transition-opacity duration-300 block group"
-              >
-                <div className="aspect-video bg-surface-container-highest/40 border border-outline-variant/20 relative flex items-center justify-center overflow-hidden">
-                  <span className="absolute top-4 right-6 text-sm opacity-50 font-mono group-hover:text-primary transition-colors z-20">{item.id}</span>
-
-                  {item.img ? (
-                    <img
-                      src={item.img}
-                      alt={item.title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100 z-10"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = 'none';
-                      }}
-                    />
-                  ) : null}
-
+                  )}
                   <span className="text-[11px] tracking-[0.2em] uppercase font-mono opacity-30 group-hover:scale-105 transition-transform duration-500 z-20">
                     {item.url !== "#" ? "View Live Project ↗" : "In Development"}
                   </span>
@@ -189,103 +175,139 @@ export default function Home() {
               </a>
             ))}
           </div>
-        </div>
+        </div> 
       </section>
 
-      {/* Journal Insights Grid */}
-      <section className="py-[120px] md:py-[160px] px-6 lg:px-[80px] bg-surface-container-low">
-        <div className="max-w-container-max mx-auto">
-          <div className="mb-16">
-            <span className="text-[14px] text-primary uppercase tracking-wider">Journal</span>
-            <h2 className="text-4xl font-bold mt-4">Latest Insights</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+      
+      {/* Tech Stacks Auto Scroll Carousel */}
+      <section className="py-[100px] md:py-[140px] bg-[#121316] overflow-hidden" id="stacks">
+        <div className="px-6 lg:px-[80px] max-w-container-max mx-auto mb-12">
+          <span className="text-[14px] text-primary uppercase tracking-wider block mb-2">Capabilities</span>
+          <h2 className="text-3xl font-bold text-white tracking-tight">Core Stack & Ecosystem</h2>
+        </div>
+
+        <div className="relative w-full flex items-center">
+          <div className="flex gap-16 items-center whitespace-nowrap animate-marquee-reverse hover:[animation-play-state:paused] transition-all duration-300">
             {[
-              {
-                title: "The Psychology Behind Great UX Design",
-                date: "UX Psychology",
-                url: "https://krishnamohanyag.medium.com/the-psychology-behind-great-ux-design-1100d981d6c5",
-                img: "https://miro.medium.com/v2/resize:fit:1200/1*m_T_b1_WnB2pL99i8gA43w.jpeg"
-              },
-              {
-                title: "UI/UX Articles & Tidbits of the Week",
-                date: "Design Tidbits",
-                url: "https://pedrocanhenha.medium.com/ui-ux-articles-and-interesting-tidbits-of-the-week-f6abca984885",
-                img: "https://miro.medium.com/v2/resize:fit:1200/1*S7wK9Fv-M1pXpB0v0uQx3Q.jpeg"
-              },
-              {
-                title: "Companies Want Three Types of Designers in 2026",
-                date: "Industry Shift",
-                url: "https://nurxmedov.medium.com/companies-want-three-types-of-designers-in-2026-the-traditional-senior-isnt-one-9c5f7921249f",
-                img: "https://miro.medium.com/v2/resize:fit:1200/1*p3b21g76_Xb4vA2vW2x5_Q.png"
-              },
-              {
-                title: "Designers, Communication and Telling Stories",
-                date: "Creative Process",
-                url: "https://pedrocanhenha.medium.com/designers-communication-and-telling-stories-371f92ac8449",
-                img: "https://miro.medium.com/v2/resize:fit:1200/1*dD0f666f7g3xM2x5v8u9_Q.jpeg"
-              }
-            ].map((article, i) => (
-              <a key={i} href={article.url} target="_blank" rel="noopener noreferrer" className="space-y-6 group cursor-pointer block">
-                <article>
-                  <div className="aspect-4/5 overflow-hidden bg-surface-container-highest/60 relative mb-6 border border-outline-variant/10 flex items-center justify-center">
-                    <div className="absolute inset-0 bg-gradient-to-br from-surface-container-highest to-surface flex flex-col justify-between p-6 opacity-40">
-                      <span className="text-[10px] font-mono tracking-widest text-primary align-super">ARTICLE // 0{i + 1}</span>
-                      <span className="text-[48px] font-black tracking-tighter text-on-surface-variant/10 select-none">JOURNAL</span>
-                    </div>
-                    <img
-                      src={article.img}
-                      alt={article.title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100 z-10"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = 'none';
-                      }}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <span className="text-[12px] text-primary uppercase font-mono tracking-wider">{article.date}</span>
-                    <h3 className="text-xl leading-tight font-semibold text-on-surface group-hover:text-primary transition-colors duration-300">{article.title}</h3>
-                  </div>
-                </article>
-              </a>
+              { name: "Figma", category: "PROTOTYPING", icon: "https://cdn.simpleicons.org/figma/ffffff" },
+              { name: "Google Stitch", category: "PROTOTYPING", icon: "https://cdn.simpleicons.org/google/ffffff" },
+              { name: "ReactJS", category: "FRONTEND", icon: "https://cdn.simpleicons.org/react/ffffff" },
+              { name: "Next.js", category: "FRONTEND", icon: "https://cdn.simpleicons.org/nextdotjs/ffffff" },
+              { name: "Tailwind CSS", category: "FRONTEND", icon: "https://cdn.simpleicons.org/tailwindcss/ffffff" },
+              { name: "Bootstrap", category: "FRONTEND", icon: "https://cdn.simpleicons.org/bootstrap/ffffff" },
+              { name: "Vite", category: "FRONTEND", icon: "https://cdn.simpleicons.org/vite/ffffff" },
+              { name: "Python", category: "BACKEND // DEV", icon: "https://cdn.simpleicons.org/python/ffffff" }
+            ].map((stack, i) => (
+              <div key={i} className="flex items-center space-x-4 select-none opacity-50 hover:opacity-100 transition-opacity duration-300">
+                <img src={stack.icon} alt={`${stack.name} icon`} className="w-6 h-6 md:w-8 md:h-8 object-contain" loading="lazy" />
+                <span className="text-2xl md:text-4xl font-extrabold text-white font-mono tracking-tighter">{stack.name}</span>
+                <span className="text-[9px] px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded font-mono tracking-widest uppercase">{stack.category}</span>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Modern Contact Footer Wrapper — RECONFIGURED FOR CLEANER LINES */}
-      <footer className="bg-surface-container w-full rounded-t-xl border-t border-outline-variant/20 pt-[120px] md:pt-[160px] pb-12" id="footer">
+      {/* New Division for Verify Badges & Certificates — Styled like Selected Works */}
+      <section className="py-[100px] md:py-[140px] bg-[#0d0e10] border-t border-b border-white/5" id="certificates">
+        <div className="px-6 lg:px-[80px] max-w-container-max mx-auto">
+          <div className="flex justify-between items-end mb-16">
+            <div>
+              <span className="text-[14px] text-primary uppercase tracking-wider">Verification</span>
+              <h2 className="text-4xl font-bold mt-4 text-white">Certificates & Badges</h2>
+            </div>
+            <div className="hidden md:block">
+              <span className="text-[14px] text-white/40 font-mono">CREDLY VERIFIED</span>
+            </div>
+          </div>
+
+          {/* Grids containing Credly Embed Frames with dark overlays */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            
+            {/* Certificate Card 1 */}
+            <div className="bg-[#121316] border border-white/5 p-8 rounded-lg flex flex-col items-center justify-center text-center group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100">
+              <div className="w-full min-h-[290px] flex items-center justify-center relative rounded overflow-hidden p-2 bg-[#121316]">
+                <iframe 
+                  className="relative z-10 mix-blend-screen opacity-90 group-hover:opacity-100 transition-opacity"
+                  src="https://www.credly.com/embedded_badge/94a71fbe-61b8-4222-af0f-805dae3ef20f" 
+                  width="150" 
+                  height="270" 
+                  title="IT Essentials Badge"
+                  loading="lazy"
+                />
+              </div>
+              <div className="mt-4 border-t border-white/5 pt-4 w-full">
+                <h3 className="text-lg font-semibold text-white tracking-tight group-hover:text-primary transition-colors">IT Essentials</h3>
+                <p className="text-[11px] font-mono opacity-50 mt-1">CISCO SYSTEMS // CREDLY</p>
+              </div>
+            </div>
+
+            {/* Certificate Card 2 */}
+            <div className="bg-[#121316] border border-white/5 p-8 rounded-lg flex flex-col items-center justify-center text-center group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100">
+              <div className="w-full min-h-[290px] flex items-center justify-center relative rounded overflow-hidden p-2 bg-[#121316]">
+                <iframe 
+                  className="relative z-10 mix-blend-screen opacity-90 group-hover:opacity-100 transition-opacity"
+                  src="https://www.credly.com/embedded_badge/37e10a6d-8405-45e3-bf3e-c4c0914e55ca" 
+                  width="150" 
+                  height="270" 
+                  title="Introduction to Modern AI Badge"
+                  loading="lazy"
+                />
+              </div>
+              <div className="mt-4 border-t border-white/5 pt-4 w-full">
+                <h3 className="text-lg font-semibold text-white tracking-tight group-hover:text-primary transition-colors">Introduction to Modern AI</h3>
+                <p className="text-[11px] font-mono opacity-50 mt-1">COMPUTING LABS // CREDLY</p>
+              </div>
+            </div>
+
+            {/* Certificate Card 3 */}
+            <div className="bg-[#121316] border border-white/5 p-8 rounded-lg flex flex-col items-center justify-center text-center group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100">
+              <div className="w-full min-h-[290px] flex items-center justify-center relative rounded overflow-hidden p-2 bg-[#121316]">
+                <iframe 
+                  className="relative z-10 mix-blend-screen opacity-90 group-hover:opacity-100 transition-opacity"
+                  src="https://www.credly.com/embedded_badge/905ec9b4-b3cd-4470-9c1a-559772b329c9" 
+                  width="150" 
+                  height="270" 
+                  title="Introduction to Data Science Badge"
+                  loading="lazy"
+                />
+              </div>
+              <div className="mt-4 border-t border-white/5 pt-4 w-full">
+                <h3 className="text-lg font-semibold text-white tracking-tight group-hover:text-primary transition-colors">Introduction to Data Science</h3>
+                <p className="text-[11px] font-mono opacity-50 mt-1">DATA ACADEMY // CREDLY</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      {/* Footer Wrapper */}
+      <footer className="bg-[#0d0e10] w-full border-t border-white/5 pt-[120px] md:pt-[160px] pb-12" id="footer">
         <div className="px-6 lg:px-[80px] max-w-container-max mx-auto flex flex-col items-center text-center">
-
-          {/* Framed Sub-title / Description layer */}
           <div className="mb-6">
-            <p className="text-[12px] md:text-[14px] uppercase tracking-[0.25em] text-on-surface-variant/60 font-mono">
+            <p className="text-[12px] md:text-[14px] uppercase tracking-[0.25em] text-white/60 font-mono">
               Have a vision that needs clarity?
             </p>
           </div>
-
-          {/* High-impact Focal CTA */}
           <div className="mb-32">
-            <a className="group flex items-center justify-center gap-4 text-4xl md:text-7xl font-extrabold text-on-surface hover:text-primary transition-all duration-500" href="mailto:uretajuster@gmail.com" target="_blank" rel="noopener noreferrer">
-              START A PROJECT
-              <span className="inline-block transform group-hover:translate-x-3 group-hover:-translate-y-3 transition-transform duration-500">↗</span>
+            <a className="group flex items-center justify-center gap-4 text-4xl md:text-7xl font-extrabold text-white hover:text-primary transition-all duration-500" href="mailto:hello@juster.design" target="_blank" rel="noopener noreferrer">
+              START A PROJECT <span className="inline-block transform group-hover:translate-x-3 group-hover:-translate-y-3 transition-transform duration-500">↗</span>
             </a>
           </div>
-
-          {/* Cleaned Bottom Metadata Bar */}
-          <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-outline-variant/10 pt-12 text-xs">
+          <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-white/5 pt-12 text-xs">
             <div className="flex gap-8 order-2 sm:order-1">
-              <a className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-on-surface-variant/70" href="https://www.instagram.com/peachmango.jus/" target="_blank" rel="noopener noreferrer">Instagram</a>
-              <a className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-on-surface-variant/70" href="https://github.com/Strixyl" target="_blank" rel="noopener noreferrer">GitHub</a>
-              <a className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-on-surface-variant/70" href="https://www.linkedin.com/in/juster-ureta/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <a className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-white/50" href="https://www.instagram.com/peachmango.jus/" target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-white/50" href="https://github.com/Strixyl" target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-white/50" href="https://www.linkedin.com/in/juster-ureta/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
             </div>
             <div className="order-1 sm:order-2">
-              <a className="text-[12px] text-on-surface-variant/50 hover:text-primary transition-colors tracking-widest font-mono" href="tel:+639292153424">
+              <a className="text-[12px] text-white/40 hover:text-primary transition-colors tracking-widest font-mono" href="tel:+639292153424">
                 PH // +63 929 215 3424
               </a>
             </div>
           </div>
-
         </div>
       </footer>
     </div>
