@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import Image from "next/image";
+import { motion } from "framer-motion";
+
+const blurDataURL = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDUiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjUiIGZpbGw9IiMxMjEzMTYiLz48L3N2Zz4=";
 
 export default function Home() {
   // 1. All top-level hooks & state setups
@@ -231,19 +235,31 @@ export default function Home() {
           </div>
 
           <div className="flex flex-col items-center justify-center text-center space-y-0.5 flex-1 hidden md:flex">
-            <a className="text-[10px] uppercase tracking-[0.25em] text-white font-bold hover:text-primary transition-colors" href="#works">
+            <motion.a 
+              whileTap={{ scale: 0.96 }}
+              className="text-[10px] uppercase tracking-[0.25em] text-white font-bold hover:text-primary transition-colors" 
+              href="#works"
+            >
               PORTFOLIO
-            </a>
-            <a className="text-[10px] uppercase tracking-[0.25em] text-white/40 font-bold hover:text-white transition-colors" href="#stacks">
+            </motion.a>
+            <motion.a 
+              whileTap={{ scale: 0.96 }}
+              className="text-[10px] uppercase tracking-[0.25em] text-white/40 font-bold hover:text-white transition-colors" 
+              href="#stacks"
+            >
               STACKS
-            </a>
+            </motion.a>
           </div>
 
           <div className="flex flex-col items-end text-right text-[10px] uppercase tracking-[0.25em] font-bold flex-1 hidden md:flex">
             <span className="text-white/30 tracking-[0.3em] font-medium">STUDIO</span>
-            <a className="text-white hover:text-primary transition-colors" href="#footer">
+            <motion.a 
+              whileTap={{ scale: 0.96 }}
+              className="text-white hover:text-primary transition-colors" 
+              href="#footer"
+            >
               CONTACT
-            </a>
+            </motion.a>
           </div>
         </nav>
       </header>
@@ -267,10 +283,15 @@ export default function Home() {
             <span className="italic text-primary font-medium">clean, friendly experiences.</span>
           </h1>
           <div className="flex flex-col items-center gap-6">
-            <a className="group relative px-10 py-4 border border-white/30 backdrop-blur-md overflow-hidden transition-all duration-500 hover:border-white" href="#works">
+            <motion.a 
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              className="group relative px-10 py-4 border border-white/30 backdrop-blur-md overflow-hidden block transition-colors duration-500 hover:border-white" 
+              href="#works"
+            >
               <span className="relative z-10 text-[14px] uppercase text-white group-hover:text-[#121316] transition-colors duration-500 font-bold tracking-wider">See My Work</span>
               <div className="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
-            </a>
+            </motion.a>
             <p className="text-[10px] tracking-widest opacity-50 uppercase font-mono">Explore projects below</p>
           </div>
         </div>
@@ -330,7 +351,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Work Portfolio Marquee Showcase */}
+      {/* Work Portfolio Bento Grid Showcase */}
       <section className="py-[120px] md:py-[160px] overflow-hidden" id="works">
         <div className="px-6 lg:px-[80px] max-w-container-max mx-auto flex justify-between items-end mb-16">
           <div>
@@ -342,41 +363,142 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="relative w-full">
-          <div className="carousel-track gap-8 px-8">
-            {[
-              { id: "01", title: "Traffic Management System", tags: "FRONTEND // ARCHITECTURE", url: "https://traffic-management-system-cyan.vercel.app/", img: "/images/tms.png" },
-              { id: "02", title: "Breeders Enterprise", tags: "FRONTEND // UI EXECUTION", url: "https://www.breedersenterprise.com/", img: "/images/bea.png" },
-              { id: "03", title: "Project Space Three", tags: "COMING SOON", url: "#", img: null },
-              { id: "04", title: "Project Space Four", tags: "COMING SOON", url: "#", img: null },
-              { id: "05", title: "Project Space Five", tags: "COMING SOON", url: "#", img: null }
-            ].map((item, index) => (
-              <a
-                key={index}
-                href={item.url}
-                target={item.url !== "#" ? "_blank" : undefined}
-                rel="noopener noreferrer"
-                className="w-[300px] md:w-[450px] shrink-0 space-y-4 opacity-40 hover:opacity-100 transition-opacity duration-300 block group"
-              >
-                <div className="aspect-video bg-white/5 border border-white/10 relative flex items-center justify-center overflow-hidden">
-                  <span className="absolute top-4 right-6 text-sm opacity-50 font-mono group-hover:text-primary transition-colors z-20">{item.id}</span>
-                  {item.img && (
-                    <img
-                      src={item.img}
-                      alt={item.title}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100 z-10"
-                    />
-                  )}
-                  <span className="text-[11px] tracking-[0.2em] uppercase font-mono opacity-30 group-hover:scale-105 transition-transform duration-500 z-20">
-                    {item.url !== "#" ? "View Live Project ↗" : "In Development"}
-                  </span>
+        <div className="px-6 lg:px-[80px] max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1: Traffic Management System - Live Project (col-span-2, row-span-2) */}
+            <motion.a
+              href="https://traffic-management-system-cyan.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-[#121316] border border-white/5 p-8 rounded-lg flex flex-col justify-between group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100 md:col-span-2 md:row-span-2 min-h-[480px]"
+            >
+              <div className="flex justify-between items-start w-full">
+                <span className="text-[11px] font-mono text-primary tracking-widest uppercase">// FEATURED WORK - 01</span>
+                <span className="text-[11px] font-mono opacity-50 tracking-wider">VIEW LIVE PROJECT ↗</span>
+              </div>
+              
+              <div className="relative w-full aspect-video rounded overflow-hidden border border-white/10 my-6 bg-white/5">
+                <Image
+                  src="/images/tms.png"
+                  alt="Traffic Management System"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 800px"
+                  placeholder="blur"
+                  blurDataURL={blurDataURL}
+                  className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                />
+              </div>
+
+              <div className="text-left w-full">
+                <h3 className="text-2xl font-bold text-white tracking-tight group-hover:text-primary transition-colors">Traffic Management System</h3>
+                <p className="text-white/60 text-sm mt-3 leading-relaxed max-w-xl">
+                  A high-performance real-time traffic analysis and control system designed to streamline transit logistics and smart-city dispatch routing pipelines.
+                </p>
+                <div className="flex gap-4 items-center mt-6 text-[10px] opacity-40 font-mono tracking-wider">
+                  <span>FRONTEND // ARCHITECTURE</span>
+                  <span>REACT // TAILWIND</span>
                 </div>
-                <div className="flex justify-between items-baseline px-2">
-                  <h3 className="text-lg md:text-xl font-semibold tracking-tight group-hover:text-primary transition-colors">{item.title}</h3>
-                  <span className="text-[10px] opacity-60 font-mono tracking-wider">{item.tags}</span>
+              </div>
+            </motion.a>
+
+            {/* Card 2: Breeders Enterprise - Live Project (col-span-1) */}
+            <motion.a
+              href="https://www.breedersenterprise.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-[#121316] border border-white/5 p-6 rounded-lg flex flex-col justify-between group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100 md:col-span-1 md:row-span-1 min-h-[240px]"
+            >
+              <div className="flex justify-between items-start">
+                <span className="text-[11px] font-mono text-primary tracking-widest uppercase">// WORK - 02</span>
+                <span className="text-[11px] font-mono opacity-50 tracking-wider">LIVE ↗</span>
+              </div>
+              
+              <div className="relative w-full aspect-video rounded overflow-hidden border border-white/10 my-4 bg-white/5">
+                <Image
+                  src="/images/bea.png"
+                  alt="Breeders Enterprise"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 400px"
+                  placeholder="blur"
+                  blurDataURL={blurDataURL}
+                  className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-80 group-hover:opacity-100"
+                />
+              </div>
+
+              <div className="text-left w-full">
+                <h3 className="text-lg font-bold text-white tracking-tight group-hover:text-primary transition-colors">Breeders Enterprise</h3>
+                <div className="flex justify-between items-baseline mt-2">
+                  <span className="text-[10px] opacity-60 font-mono tracking-wider">FRONTEND // UI EXECUTION</span>
                 </div>
-              </a>
-            ))}
+              </div>
+            </motion.a>
+
+            {/* Card 3: Project Space Three - Coming Soon (col-span-1) */}
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-[#121316] border border-white/5 p-6 rounded-lg flex flex-col justify-between group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100 md:col-span-1 md:row-span-1 min-h-[220px]"
+            >
+              <div className="flex justify-between items-start">
+                <span className="text-[11px] font-mono text-primary tracking-widest uppercase">// SPACE 03</span>
+                <span className="text-[10px] px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded font-mono tracking-widest uppercase scale-90">IN DEV</span>
+              </div>
+              <div className="my-4 text-left">
+                <h3 className="text-lg font-bold tracking-tight text-white group-hover:text-primary transition-colors">Project Space Three</h3>
+                <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                  Advanced micro-interactions, complex physics engines, and custom canvas-based visuals.
+                </p>
+              </div>
+              <div className="flex justify-between items-center text-[10px] opacity-40 font-mono tracking-wider w-full">
+                <span>EXPERIMENTAL // UI</span>
+                <span>COMING SOON</span>
+              </div>
+            </motion.div>
+
+            {/* Card 4: Project Space Four - Coming Soon (col-span-1) */}
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-[#121316] border border-white/5 p-6 rounded-lg flex flex-col justify-between group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100 md:col-span-1 min-h-[220px]"
+            >
+              <div className="flex justify-between items-start">
+                <span className="text-[11px] font-mono text-primary tracking-widest uppercase">// SPACE 04</span>
+                <span className="text-[10px] px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded font-mono tracking-widest uppercase scale-90">IN DEV</span>
+              </div>
+              <div className="my-4 text-left">
+                <h3 className="text-lg font-bold tracking-tight text-white group-hover:text-primary transition-colors">Project Space Four</h3>
+                <p className="text-white/60 text-xs mt-2 leading-relaxed">
+                  Optimized Next.js systems implementing dynamic client-side animations.
+                </p>
+              </div>
+              <div className="flex justify-between items-center text-[10px] opacity-40 font-mono tracking-wider w-full">
+                <span>UI SYSTEM // MOTION</span>
+                <span>COMING SOON</span>
+              </div>
+            </motion.div>
+
+            {/* Card 5: Project Space Five - Coming Soon (col-span-2) */}
+            <motion.div
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-[#121316] border border-white/5 p-8 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-6 group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100 md:col-span-2 min-h-[220px]"
+            >
+              <div className="space-y-2 text-left w-full md:w-3/4">
+                <span className="text-[11px] font-mono text-primary tracking-widest uppercase block">// SPACE 05</span>
+                <h3 className="text-2xl font-bold tracking-tight text-white group-hover:text-primary transition-colors">Project Space Five</h3>
+                <p className="text-white/60 text-sm leading-relaxed mt-2">
+                  WebGL-based rendering pipelines and shaders sandbox, investigating procedural generative layouts and custom fluid physics.
+                </p>
+              </div>
+              <div className="flex flex-row md:flex-col justify-between items-end gap-2 w-full md:w-1/4 shrink-0 border-t md:border-t-0 border-white/5 pt-4 md:pt-0">
+                <span className="text-[10px] px-2 py-0.5 bg-primary/10 text-primary border border-primary/20 rounded font-mono tracking-widest uppercase">IN DEVELOPMENT</span>
+                <span className="text-[10px] opacity-40 font-mono tracking-wider mt-1 block">CREATIVE SANDBOX</span>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -393,37 +515,38 @@ export default function Home() {
               <span className="text-[14px] text-white/40 font-mono">CREDLY VERIFIED</span>
             </div>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <div className="bg-[#121316] border border-white/5 p-8 rounded-lg flex flex-col items-center justify-center text-center group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100">
-              <div className="w-full min-h-[290px] flex items-center justify-center relative rounded overflow-hidden p-2 bg-[#121316]">
-                <iframe className="relative z-10 mix-blend-screen opacity-90 group-hover:opacity-100 transition-opacity" src="https://www.credly.com/embedded_badge/94a71fbe-61b8-4222-af0f-805dae3ef20f" width="150" height="270" title="IT Essentials Badge" loading="lazy" />
-              </div>
-              <div className="mt-4 border-t border-white/5 pt-4 w-full">
-                <h3 className="text-lg font-semibold text-white tracking-tight group-hover:text-primary transition-colors">IT Essentials</h3>
-                <p className="text-[11px] font-mono opacity-50 mt-1">CISCO SYSTEMS // CREDLY</p>
-              </div>
-            </div>
-
-            <div className="bg-[#121316] border border-white/5 p-8 rounded-lg flex flex-col items-center justify-center text-center group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100">
-              <div className="w-full min-h-[290px] flex items-center justify-center relative rounded overflow-hidden p-2 bg-[#121316]">
-                <iframe className="relative z-10 mix-blend-screen opacity-90 group-hover:opacity-100 transition-opacity" src="https://www.credly.com/embedded_badge/37e10a6d-8405-45e3-bf3e-c4c0914e55ca" width="150" height="270" title="Introduction to Modern AI Badge" loading="lazy" />
-              </div>
-              <div className="mt-4 border-t border-white/5 pt-4 w-full">
-                <h3 className="text-lg font-semibold text-white tracking-tight group-hover:text-primary transition-colors">Introduction to Modern AI</h3>
-                <p className="text-[11px] font-mono opacity-50 mt-1">COMPUTING LABS // CREDLY</p>
-              </div>
-            </div>
-
-            <div className="bg-[#121316] border border-white/5 p-8 rounded-lg flex flex-col items-center justify-center text-center group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100">
-              <div className="w-full min-h-[290px] flex items-center justify-center relative rounded overflow-hidden p-2 bg-[#121316]">
-                <iframe className="relative z-10 mix-blend-screen opacity-90 group-hover:opacity-100 transition-opacity" src="https://www.credly.com/embedded_badge/905ec9b4-b3cd-4470-9c1a-559772b329c9" width="150" height="270" title="Introduction to Data Science Badge" loading="lazy" />
-              </div>
-              <div className="mt-4 border-t border-white/5 pt-4 w-full">
-                <h3 className="text-lg font-semibold text-white tracking-tight group-hover:text-primary transition-colors">Introduction to Data Science</h3>
-                <p className="text-[11px] font-mono opacity-50 mt-1">DATA ACADEMY // CREDLY</p>
-              </div>
-            </div>
+        <div className="relative w-full">
+          <div className="carousel-track gap-8 px-8">
+            {[
+              { title: "IT Essentials", issuer: "CISCO SYSTEMS // CREDLY", badgeUrl: "https://www.credly.com/embedded_badge/94a71fbe-61b8-4222-af0f-805dae3ef20f" },
+              { title: "Introduction to Modern AI", issuer: "COMPUTING LABS // CREDLY", badgeUrl: "https://www.credly.com/embedded_badge/37e10a6d-8405-45e3-bf3e-c4c0914e55ca" },
+              { title: "Introduction to Data Science", issuer: "DATA ACADEMY // CREDLY", badgeUrl: "https://www.credly.com/embedded_badge/905ec9b4-b3cd-4470-9c1a-559772b329c9" },
+              { title: "IT Essentials", issuer: "CISCO SYSTEMS // CREDLY", badgeUrl: "https://www.credly.com/embedded_badge/94a71fbe-61b8-4222-af0f-805dae3ef20f" },
+              { title: "Introduction to Modern AI", issuer: "COMPUTING LABS // CREDLY", badgeUrl: "https://www.credly.com/embedded_badge/37e10a6d-8405-45e3-bf3e-c4c0914e55ca" },
+              { title: "Introduction to Data Science", issuer: "DATA ACADEMY // CREDLY", badgeUrl: "https://www.credly.com/embedded_badge/905ec9b4-b3cd-4470-9c1a-559772b329c9" },
+              { title: "IT Essentials", issuer: "CISCO SYSTEMS // CREDLY", badgeUrl: "https://www.credly.com/embedded_badge/94a71fbe-61b8-4222-af0f-805dae3ef20f" },
+              { title: "Introduction to Modern AI", issuer: "COMPUTING LABS // CREDLY", badgeUrl: "https://www.credly.com/embedded_badge/37e10a6d-8405-45e3-bf3e-c4c0914e55ca" },
+              { title: "Introduction to Data Science", issuer: "DATA ACADEMY // CREDLY", badgeUrl: "https://www.credly.com/embedded_badge/905ec9b4-b3cd-4470-9c1a-559772b329c9" }
+            ].map((item, index) => (
+              <motion.div
+                key={index}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                className="w-[280px] md:w-[350px] shrink-0 bg-[#121316] border border-white/5 p-6 rounded-lg flex flex-col items-center justify-between text-center group transition-all duration-300 hover:border-primary/30 opacity-70 hover:opacity-100"
+              >
+                <div className="w-full min-h-[240px] flex items-center justify-center relative rounded overflow-hidden p-2 bg-[#121316]/50 border border-white/5">
+                  <iframe className="relative z-10 mix-blend-screen opacity-90 group-hover:opacity-100 transition-opacity" src={item.badgeUrl} width="150" height="270" title={`${item.title} Badge`} loading="lazy" />
+                </div>
+                <div className="mt-4 border-t border-white/5 pt-4 w-full text-left font-sans">
+                  <span className="text-[9px] font-mono text-primary tracking-widest uppercase block mb-1">// CREDLY VERIFIED</span>
+                  <h3 className="text-lg font-bold text-white tracking-tight group-hover:text-primary transition-colors truncate">{item.title}</h3>
+                  <p className="text-[10px] font-mono opacity-50 mt-1 uppercase">{item.issuer.split(" // ")[0]}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -464,18 +587,55 @@ export default function Home() {
             <p className="text-[12px] md:text-[14px] uppercase tracking-[0.25em] text-white/60 font-mono">Have a vision that needs clarity?</p>
           </div>
           <div className="mb-32">
-            <a className="group flex items-center justify-center gap-4 text-4xl md:text-7xl font-extrabold text-white hover:text-primary transition-all duration-500" href="mailto:uretajuster@gmail.com" target="_blank" rel="noopener noreferrer">
+            <motion.a 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="group flex items-center justify-center gap-4 text-4xl md:text-7xl font-extrabold text-white hover:text-primary transition-all duration-500" 
+              href="mailto:uretajuster@gmail.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
               START A PROJECT <span className="inline-block transform group-hover:translate-x-3 group-hover:-translate-y-3 transition-transform duration-500">↗</span>
-            </a>
+            </motion.a>
           </div>
           <div className="w-full flex flex-col sm:flex-row justify-between items-center gap-6 border-t border-white/5 pt-12 text-xs">
             <div className="flex gap-8 order-2 sm:order-1">
-              <a className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-white/50" href="https://www.instagram.com/peachmango.jus/" target="_blank" rel="noopener noreferrer">Instagram</a>
-              <a className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-white/50" href="https://github.com/Strixyl" target="_blank" rel="noopener noreferrer">GitHub</a>
-              <a className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-white/50" href="https://www.linkedin.com/in/juster-ureta/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+              <motion.a 
+                whileTap={{ scale: 0.96 }}
+                className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-white/50" 
+                href="https://www.instagram.com/peachmango.jus/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                Instagram
+              </motion.a>
+              <motion.a 
+                whileTap={{ scale: 0.96 }}
+                className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-white/50" 
+                href="https://github.com/Strixyl" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                GitHub
+              </motion.a>
+              <motion.a 
+                whileTap={{ scale: 0.96 }}
+                className="uppercase tracking-[0.15em] hover:text-primary transition-colors font-mono text-white/50" 
+                href="https://www.linkedin.com/in/juster-ureta/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                LinkedIn
+              </motion.a>
             </div>
             <div className="order-1 sm:order-2">
-              <a className="text-[12px] text-white/40 hover:text-primary transition-colors tracking-widest font-mono" href="tel:+639292153424">PH // +63 929 215 3424</a>
+              <motion.a 
+                whileTap={{ scale: 0.96 }}
+                className="text-[12px] text-white/40 hover:text-primary transition-colors tracking-widest font-mono" 
+                href="tel:+639292153424"
+              >
+                PH // +63 929 215 3424
+              </motion.a>
             </div>
           </div>
         </div>
