@@ -1,23 +1,78 @@
 @import "tailwindcss";
 
-@theme {
-  /* Custom Palette Setup */
-  --color-primary-container: #1e2023;
-  --color-on-surface-variant: #c6c6ca;
-  --color-secondary-container: #47494c;
-  --color-surface-dim: #121316;
-  --color-surface-container: #1f1f23;
-  --color-surface-container-low: #1a1b1e;
-  --color-surface-container-high: #292a2d;
-  --color-surface-container-highest: #343538;
-  --color-surface-bright: #38393c;
-  --color-outline-variant: #45474a;
-  --color-primary: #c6c6ca;
-  --color-secondary: #c5c6ca;
-  --color-surface: #121316;
-  --color-on-surface: #e3e2e6;
+:root {
+  /* === Primitive Pitch Monochrome Palette === */
+  --mono-pitch: #080808;
+  --mono-black: #0a0a0a;
+  --mono-elevated: #121212;
+  --mono-muted: #737373;
+  --mono-secondary: #8e8e8e;
+  --mono-white: #ffffff;
 
-  /* Layout Spacing Adjustments */
+  /* === Semantic Studio Tokens === */
+  --studio-bg: var(--mono-pitch);
+  --studio-bg-alt: var(--mono-black);
+  --studio-surface: var(--mono-black);
+  --studio-surface-hover: var(--mono-elevated);
+
+  --studio-fg: var(--mono-white);
+  --studio-secondary: var(--mono-secondary);
+  --studio-muted: var(--mono-muted);
+
+  --studio-dashed: rgba(255, 255, 255, 0.16);
+  --studio-border: rgba(255, 255, 255, 0.25);
+  --studio-border-subtle: rgba(255, 255, 255, 0.12);
+  --studio-border-active: var(--mono-white);
+
+  /* === Component Geometry Tokens === */
+  --studio-radius: 0px;
+  --studio-accent-w: 24px;
+  --studio-accent-h: 2px;
+
+  /* === Scoped Top Header Bar Tokens === */
+  --hud-bg: var(--mono-pitch);
+  --hud-fg: #efefef;
+  --hud-fg-bright: var(--mono-white);
+  --hud-muted: var(--mono-muted);
+  --hud-hairline: var(--studio-dashed);
+}
+
+@theme inline {
+  /* Typography Families */
+  --font-pixel: var(--font-silkscreen), ui-monospace, monospace;
+  --font-sans: var(--font-geist), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-header-display: var(--font-space-grotesk), "Segoe UI", system-ui, sans-serif;
+  --font-header-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Studio Pitch-Black Semantic Colors */
+  --color-studio-bg: var(--studio-bg);
+  --color-studio-bg-alt: var(--studio-bg-alt);
+  --color-studio-surface: var(--studio-surface);
+  --color-studio-surface-hover: var(--studio-surface-hover);
+  --color-studio-fg: var(--studio-fg);
+  --color-studio-secondary: var(--studio-secondary);
+  --color-studio-muted: var(--studio-muted);
+  --color-studio-dashed: var(--studio-dashed);
+  --color-studio-border: var(--studio-border);
+  --color-studio-subtle: var(--studio-border-subtle);
+
+  /* Top Header Bar Tokens */
+  --color-hud-bg: var(--hud-bg);
+  --color-hud-fg: var(--hud-fg);
+  --color-hud-fg-bright: var(--hud-fg-bright);
+  --color-hud-muted: var(--hud-muted);
+  --color-hud-hairline: var(--hud-hairline);
+
+  /* Preserved Theme Aliases */
+  --color-primary: var(--studio-fg);
+  --color-secondary: var(--studio-secondary);
+  --color-surface: var(--studio-bg);
+  --color-surface-dim: var(--studio-bg);
+  --color-on-surface: var(--studio-fg);
+  --color-on-surface-variant: var(--studio-secondary);
+
+  /* Layout Spacing Tokens */
   --spacing-margin-mobile: 24px;
   --spacing-margin-desktop: 80px;
   --spacing-gutter: 32px;
@@ -26,15 +81,111 @@
 }
 
 body {
-  background-color: #121316;
-  color: #e3e2e6;
+  background-color: var(--studio-bg);
+  color: var(--studio-fg);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.hero-bg {
-  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC_u9-KqAIHLGHlQgvTZWKVbpzZn1GxEGEFb7lL-b1RC6CLUhix_humAlkXCRQjWIr_QWA6bxV-APnnr8BpRGKLA-_Atmem3_WmDq9hrAlnI9jHKL7-p8B0CiqXLALJcZ0KXK9MtMzs2EuH0qaRP8Pw-iYK6HZbWDAwepCb0jzUYBehwKBNSFsKrX-G_HNWDHJ_tV7QsHFkZuRzJsIkWo0_I3bKQYj7_0tYvWzhkZ9JtabIB5HmPG4TPRgZ8EAtJwwTZTE');
-  background-size: cover;
-  background-position: center;
+/* Header Navigation Label */
+.hud-header-label {
+  font-family: var(--font-header-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+}
+
+/* 24px x 2px Pure White Section Heading Accent Bar */
+.studio-accent-bar {
+  display: block;
+  width: var(--studio-accent-w);
+  height: var(--studio-accent-h);
+  background-color: var(--studio-fg);
+}
+
+/* Architectural 0px Square Card */
+.studio-card {
+  position: relative;
+  background-color: var(--studio-surface);
+  border: 1px solid var(--studio-border-subtle);
+  border-radius: var(--studio-radius);
+  transition: border-color 240ms ease, background-color 240ms ease;
+}
+
+.studio-card:hover {
+  background-color: var(--studio-surface-hover);
+  border-color: var(--studio-border-active);
+}
+
+/* Primary Studio Button: Solid White Fill -> Inverts on Hover */
+.studio-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background-color: var(--studio-fg);
+  color: var(--studio-bg);
+  border: 1px solid var(--studio-fg);
+  border-radius: var(--studio-radius);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease;
+}
+
+.studio-btn-primary:hover {
+  background-color: var(--studio-bg);
+  color: var(--studio-fg);
+  border-color: var(--studio-fg);
+}
+
+/* Secondary Studio Button: Pitch-Black + 1px Border -> Inverts on Hover */
+.studio-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  background-color: var(--studio-bg);
+  color: var(--studio-fg);
+  border: 1px solid var(--studio-border);
+  border-radius: var(--studio-radius);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease;
+}
+
+.studio-btn-secondary:hover,
+.group:hover .studio-btn-secondary {
+  background-color: var(--studio-fg);
+  color: var(--studio-bg);
+  border-color: var(--studio-fg);
+}
+
+/* Minimalist Text Link with Crisp 1px Bottom Underline */
+.studio-link {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  text-decoration-color: var(--studio-border);
+  transition: color 200ms ease, text-decoration-color 200ms ease;
+}
+
+.studio-link:hover {
+  color: var(--studio-fg);
+  text-decoration-color: var(--studio-fg);
+}
+
+/* High-Contrast Monochrome Media Frame (0px Sharp Corners) */
+.studio-media {
+  filter: grayscale(100%) contrast(1.25) brightness(0.92);
+  border-radius: var(--studio-radius);
+  transition: filter 500ms ease, transform 700ms ease, opacity 400ms ease;
+}
+
+.group:hover .studio-media {
+  filter: grayscale(0%) contrast(1.04) brightness(1);
 }
 
 /* Custom Interactive Cursor styling */
@@ -42,7 +193,7 @@ body {
   width: 20px;
   height: 20px;
   background: #fff;
-  border-radius: 50%;
+  border-radius: 0px;
   position: fixed;
   pointer-events: none;
   z-index: 9999;
@@ -50,22 +201,7 @@ body {
   transition: transform 0.1s ease;
 }
 
-/* Seamless Marquee Loop Styles */
-@keyframes scrollMarquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(calc(-50% - (16px * 5))); }
-}
-
-.carousel-track {
-  display: flex;
-  width: max-content;
-  animation: scrollMarquee 40s linear infinite;
-}
-
-.carousel-track:hover {
-  animation-play-state: paused;
-}
-
+/* Seamless Reverse Marquee Loop */
 @keyframes marquee-reverse {
   0% { transform: translateX(-50%); }
   100% { transform: translateX(0%); }

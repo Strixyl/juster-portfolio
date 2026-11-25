@@ -1,5 +1,32 @@
 import type { Metadata } from "next";
+import { Silkscreen, Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+
+const silkscreen = Silkscreen({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-silkscreen",
+  display: "swap",
+});
+
+const geist = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist",
+  display: "swap",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+  display: "swap",
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://juster-portfolio.vercel.app"),
@@ -38,8 +65,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="antialiased overflow-x-hidden bg-[#121316] text-[#e3e2e6]">
+    <html
+      lang="en"
+      className={`dark ${silkscreen.variable} ${geist.variable} ${geistMono.variable} ${spaceGrotesk.variable}`}
+    >
+      <body className="antialiased overflow-x-hidden bg-studio-bg text-studio-fg font-sans">
         {children}
       </body>
     </html>
