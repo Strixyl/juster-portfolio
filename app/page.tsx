@@ -7,57 +7,33 @@ import {
   HudPixelBlocks,
   StudioArrowNE,
   StudioSpecIcon,
-  StudioBadgeEmblem,
   StudioBlueprintMargin,
 } from "./components/HudAccents";
+import { PhilosophyStage } from "./components/PhilosophyStage";
 
-type CredentialItem = {
-  index: string;
-  id: string;
-  title: string;
-  issuer: string;
-  platform: string;
-  focus: string;
-  emblem: "hardware" | "ai" | "data";
-  badgeUrl: string;
-  verifyUrl: string;
-};
-
-const CREDENTIALS: CredentialItem[] = [
+const CREDENTIALS = [
   {
-    index: "01",
     id: "94a71fbe-61b8-4222-af0f-805dae3ef20f",
     title: "IT Essentials",
     issuer: "CISCO SYSTEMS",
-    platform: "CREDLY",
-    focus: "SYSTEMS // HARDWARE",
-    emblem: "hardware",
     badgeUrl:
       "https://www.credly.com/embedded_badge/94a71fbe-61b8-4222-af0f-805dae3ef20f",
     verifyUrl:
       "https://www.credly.com/badges/94a71fbe-61b8-4222-af0f-805dae3ef20f/public_url",
   },
   {
-    index: "02",
     id: "37e10a6d-8405-45e3-bf3e-c4c0914e55ca",
     title: "Introduction to Modern AI",
     issuer: "COMPUTING LABS",
-    platform: "CREDLY",
-    focus: "AI // INTELLIGENCE",
-    emblem: "ai",
     badgeUrl:
       "https://www.credly.com/embedded_badge/37e10a6d-8405-45e3-bf3e-c4c0914e55ca",
     verifyUrl:
       "https://www.credly.com/badges/37e10a6d-8405-45e3-bf3e-c4c0914e55ca/public_url",
   },
   {
-    index: "03",
     id: "905ec9b4-b3cd-4470-9c1a-559772b329c9",
     title: "Introduction to Data Science",
     issuer: "DATA ACADEMY",
-    platform: "CREDLY",
-    focus: "DATA // ANALYTICS",
-    emblem: "data",
     badgeUrl:
       "https://www.credly.com/embedded_badge/905ec9b4-b3cd-4470-9c1a-559772b329c9",
     verifyUrl:
@@ -71,25 +47,11 @@ const blurDataURL =
 export default function Home() {
   // 1. All top-level hooks & state setups
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const [typedText, setTypedText] = useState("");
-  const [startTyping, setStartTyping] = useState(false);
-  const [activeBadge, setActiveBadge] = useState<CredentialItem | null>(null);
-  const fullPhrase = "Websites built to capture minds and hold attention.";
-
-  // Close live Credly badge modal on Escape
-  useEffect(() => {
-    if (!activeBadge) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setActiveBadge(null);
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeBadge]);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const sectionRef = useRef<HTMLDivElement | null>(null);
 
-  // Panicked Pepper Particle Engine Effect (Pitch Monochrome Palette)
+  // Panicked Pepper Particle Engine Effect (Optimized Monochrome Starfield)
   useEffect(() => {
     const canvas = canvasRef.current;
     const section = sectionRef.current;
@@ -98,126 +60,200 @@ export default function Home() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animationFrameId: number;
-    let particles: Array<{
-      x: number; // Current X position
-      y: number; // Current Y position
-      baseX: number; // Anchor target X coordinate
-      baseY: number; // Anchor target Y coordinate
-      vx: number; // Velocity X
-      vy: number; // Velocity Y
-      color: string; // Particle color
-      size: number; // Particle radius
-    }> = [];
+    const COLORS = [
+      "rgba(255, 255, 255, 0.9)",
+      "rgba(255, 255, 255, 0.65)",
+      "rgba(142, 142, 142, 0.45)",
+    ] as const;
 
-    const mouse = { x: -9999, y: -9999, radius: 120 }; // Expanded panic zone radius
-
-    // Set dimensions based on the parent container width/height
-    const resizeCanvas = () => {
-      canvas.width = section.offsetWidth;
-      canvas.height = section.offsetHeight;
-      initParticles();
+    type Particle = {
+      x: number;
+      y: number;
+      baseX: number;
+      baseY: number;
+      vx: number;
+      vy: number;
+      size: number;
     };
 
-    // Generates a dense field of monochrome architectural points across the section bounds
+    let animationFrameId = 0;
+    let resizeTimeout: ReturnType<typeof setTimeout> | null = null;
+    let isVisible = false;
+    let isRunning = false;
+    let isPointerInside = false;
+
+    // Group particles into 3 color buckets to avoid 450+ fillStyle changes/frame
+    let buckets: [Particle[], Particle[], Particle[]] = [[], [], []];
+
+    const RADIUS = 120;
+    const RADIUS_SQ = RADIUS * RADIUS;
+    const BURST_VELOCITY = 18;
+    const mouse = { x: -9999, y: -9999 };
+    let cachedRect = canvas.getBoundingClientRect();
+
+    const updateRect = () => {
+      cachedRect = canvas.getBoundingClientRect();
+    };
+
+    const drawStaticFrame = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let b = 0; b < 3; b++) {
+        ctx.fillStyle = COLORS[b];
+        const list = buckets[b];
+        for (let i = 0; i < list.length; i++) {
+          const p = list[i];
+          ctx.fillRect((p.x + 0.5) | 0, (p.y + 0.5) | 0, p.size, p.size);
+        }
+      }
+    };
+
     const initParticles = () => {
-      particles = [];
-      const starCount = canvas.width < 768 ? 200 : 450;
+      buckets = [[], [], []];
+      const starCount = canvas.width < 768 ? 120 : 260;
 
       for (let i = 0; i < starCount; i++) {
         const rx = Math.random() * canvas.width;
         const ry = Math.random() * canvas.height;
-
-        // High-contrast monochrome dots: stark white and muted neutral grey
         const colorRand = Math.random();
-        let color = "rgba(255, 255, 255, 0.65)";
-        if (colorRand > 0.85) color = "rgba(255, 255, 255, 0.9)";
-        else if (colorRand > 0.5) color = "rgba(142, 142, 142, 0.45)";
+        const bucketIdx = colorRand > 0.85 ? 0 : colorRand > 0.5 ? 2 : 1;
 
-        particles.push({
+        buckets[bucketIdx].push({
           x: rx,
           y: ry,
           baseX: rx,
           baseY: ry,
           vx: 0,
           vy: 0,
-          color: color,
-          size: Math.random() * 1.4 + 0.5, // Crisp pixel/dot sizing
+          size: Math.max(1, Math.round((Math.random() * 1.4 + 0.6) * 1.3)),
         });
+      }
+
+      drawStaticFrame();
+    };
+
+    const resizeCanvas = () => {
+      canvas.width = section.offsetWidth;
+      canvas.height = section.offsetHeight;
+      updateRect();
+      initParticles();
+    };
+
+    const renderLoop = () => {
+      if (!isVisible) {
+        isRunning = false;
+        return;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let hasMotion = isPointerInside;
+
+      for (let b = 0; b < 3; b++) {
+        ctx.fillStyle = COLORS[b];
+        const list = buckets[b];
+
+        for (let i = 0; i < list.length; i++) {
+          const p = list[i];
+
+          // Squared-distance check skips Math.sqrt & trig for ~95% of particles
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const distSq = dx * dx + dy * dy;
+
+          if (distSq < RADIUS_SQ && distSq > 0.0001) {
+            const dist = Math.sqrt(distSq);
+            const force = ((RADIUS - dist) / RADIUS) * BURST_VELOCITY;
+            // Normalized vector (dx/dist, dy/dist) avoids atan2/cos/sin
+            p.vx -= (dx / dist) * force;
+            p.vy -= (dy / dist) * force;
+            hasMotion = true;
+          } else {
+            const homeDx = p.baseX - p.x;
+            const homeDy = p.baseY - p.y;
+            p.vx += homeDx * 0.03;
+            p.vy += homeDy * 0.03;
+
+            if (
+              !hasMotion &&
+              (Math.abs(homeDx) > 0.08 ||
+                Math.abs(homeDy) > 0.08 ||
+                Math.abs(p.vx) > 0.05 ||
+                Math.abs(p.vy) > 0.05)
+            ) {
+              hasMotion = true;
+            }
+          }
+
+          p.vx *= 0.85;
+          p.vy *= 0.85;
+          p.x += p.vx;
+          p.y += p.vy;
+
+          ctx.fillRect((p.x + 0.5) | 0, (p.y + 0.5) | 0, p.size, p.size);
+        }
+      }
+
+      // Auto-sleep when pointer is away and particles have settled at home
+      if (hasMotion) {
+        animationFrameId = requestAnimationFrame(renderLoop);
+      } else {
+        isRunning = false;
       }
     };
 
-    // Canvas Frame Loop logic computing Panicked Pepper vectors
-    const renderLoop = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-
-        // Compute distances relative to user pointer position coordinates
-        const dx = mouse.x - p.x;
-        const dy = mouse.y - p.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < mouse.radius) {
-          // PANIC ACCELERATION: Explodes away violently based on cursor proximity
-          const force = (mouse.radius - distance) / mouse.radius;
-          const angle = Math.atan2(dy, dx);
-
-          const burstVelocity = 18; // High speed scatter kick force
-          const pushX = Math.cos(angle) * force * burstVelocity;
-          const pushY = Math.sin(angle) * force * burstVelocity;
-
-          p.vx -= pushX;
-          p.vy -= pushY;
-        } else {
-          // CALMING DOWN: Slowly pull back to original coordinate coordinates
-          const homeDx = p.baseX - p.x;
-          const homeDy = p.baseY - p.y;
-
-          p.vx += homeDx * 0.03; // Smooth spring back formula
-          p.vy += homeDy * 0.03;
-        }
-
-        // Friction/Drag mechanics to damp the chaotic speed vector naturally
-        p.vx *= 0.85;
-        p.vy *= 0.85;
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Render sharp square pixel point onto canvas space
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x, p.y, p.size * 1.3, p.size * 1.3);
+    const wakeLoop = () => {
+      if (!isRunning && isVisible) {
+        isRunning = true;
+        animationFrameId = requestAnimationFrame(renderLoop);
       }
-
-      animationFrameId = requestAnimationFrame(renderLoop);
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      mouse.x = e.clientX - rect.left;
-      mouse.y = e.clientY - rect.top;
+      isPointerInside = true;
+      mouse.x = e.clientX - cachedRect.left;
+      mouse.y = e.clientY - cachedRect.top;
+      wakeLoop();
     };
 
     const handleMouseLeave = () => {
+      isPointerInside = false;
       mouse.x = -9999;
       mouse.y = -9999;
     };
 
-    window.addEventListener("resize", resizeCanvas);
-    section.addEventListener("mousemove", handleMouseMove);
-    section.addEventListener("mouseleave", handleMouseLeave);
+    const handleResize = () => {
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(resizeCanvas, 150);
+    };
+
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          updateRect();
+          if (isPointerInside) wakeLoop();
+        } else if (isRunning) {
+          cancelAnimationFrame(animationFrameId);
+          isRunning = false;
+        }
+      },
+      { rootMargin: "100px" }
+    );
+
+    visibilityObserver.observe(section);
+    window.addEventListener("resize", handleResize, { passive: true });
+    window.addEventListener("scroll", updateRect, { passive: true });
+    section.addEventListener("mousemove", handleMouseMove, { passive: true });
+    section.addEventListener("mouseleave", handleMouseLeave, { passive: true });
 
     resizeCanvas();
-    renderLoop();
 
     return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      if (section) {
-        section.removeEventListener("mousemove", handleMouseMove);
-        section.removeEventListener("mouseleave", handleMouseLeave);
-      }
+      visibilityObserver.disconnect();
+      if (resizeTimeout) clearTimeout(resizeTimeout);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", updateRect);
+      section.removeEventListener("mousemove", handleMouseMove);
+      section.removeEventListener("mouseleave", handleMouseLeave);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -247,51 +283,13 @@ export default function Home() {
     };
 
     document.addEventListener("click", handleScrollClick);
-    window.addEventListener("scroll", handleScrollVisibility);
+    window.addEventListener("scroll", handleScrollVisibility, { passive: true });
 
     return () => {
       document.removeEventListener("click", handleScrollClick);
       window.removeEventListener("scroll", handleScrollVisibility);
     };
   }, []);
-
-  // Effect: Intersection Observer (Detecting Scroll position + Resetting on leave)
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setStartTyping(true);
-        } else {
-          setStartTyping(false);
-          setTypedText("");
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const target = document.getElementById("philosophy-container");
-    if (target) observer.observe(target);
-
-    return () => {
-      if (target) observer.unobserve(target);
-    };
-  }, []);
-
-  // Effect: Typing Engine Frame Interval
-  useEffect(() => {
-    if (!startTyping) return;
-
-    let index = 0;
-    const interval = setInterval(() => {
-      setTypedText(fullPhrase.slice(0, index + 1));
-      index++;
-      if (index >= fullPhrase.length) {
-        clearInterval(interval);
-      }
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, [startTyping]);
 
   return (
     <div className="relative min-h-screen bg-studio-bg text-studio-fg selection:bg-studio-fg selection:text-studio-bg">
@@ -304,7 +302,7 @@ export default function Home() {
         }`}
       >
         <nav className="flex justify-between items-center px-6 lg:px-[80px] py-4 max-w-container-max mx-auto h-[70px]">
-          <div className="flex items-center gap-3 text-[24px] md:text-[28px] tracking-[0.22em] text-hud-fg-bright font-bold uppercase leading-none font-header-display select-none flex-1">
+          <div className="flex items-center gap-3 text-[22px] md:text-[26px] tracking-[0.14em] text-hud-fg-bright font-bold uppercase leading-none font-pixel select-none flex-1">
             <span>JUSTER</span>
             <HudPixelBlocks className="text-hud-fg/80 hidden sm:inline-block" />
           </div>
@@ -348,10 +346,14 @@ export default function Home() {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0 opacity-[0.14] scale-105 grayscale contrast-125 brightness-75"
+          className="absolute inset-0 w-full h-full object-cover z-0 opacity-55 scale-105"
           src="/videoholder.mp4"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-studio-bg via-studio-bg/80 to-studio-bg/60 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-studio-bg via-studio-bg/40 to-studio-bg/25 z-10" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(8,8,8,0.58)_0%,rgba(8,8,8,0.12)_72%)] z-10"
+        />
         <StudioBlueprintMargin className="z-10 text-studio-fg" />
 
         <div className="relative z-20 text-center px-6 md:px-0">
@@ -359,12 +361,9 @@ export default function Home() {
             <StudioSpecIcon variant="terminal" className="w-3.5 h-3.5 text-studio-fg" />
             <span>Frontend Developer</span>
           </p>
-          <h1 className="font-pixel uppercase text-xl sm:text-2xl md:text-3xl lg:text-[38px] text-studio-fg max-w-5xl mx-auto mb-12 font-normal leading-[1.45] tracking-[0.02em]">
+          <h1 className="font-header-display text-3xl md:text-5xl text-studio-fg max-w-5xl mx-auto mb-12 font-normal leading-relaxed tracking-tight">
             A frontend developer who builds fast, responsive websites and turns
-            complex user interfaces into{" "}
-            <span className="underline decoration-1 underline-offset-[8px] decoration-studio-border text-studio-fg">
-              clean, friendly experiences.
-            </span>
+            complex user interfaces into clean, friendly experiences.
           </h1>
           <div className="flex flex-col items-center gap-6">
             <motion.a
@@ -391,35 +390,17 @@ export default function Home() {
         {/* Antigravity Starfield Canvas Layer */}
         <canvas
           ref={canvasRef}
-          className="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-45 mix-blend-screen"
+          className="absolute inset-0 w-full h-full z-0 pointer-events-none opacity-45"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-studio-bg via-transparent to-studio-bg z-10 pointer-events-none" />
 
-        <div className="relative z-20 max-w-4xl mx-auto">
-          <div
-            id="philosophy-container"
-            className="relative min-h-[6rem] flex items-center justify-center mb-12"
-          >
-            <div className="relative inline-block text-left max-w-2xl mx-auto">
-              {/* Grey Underlay Phrase */}
-              <h2 className="text-3xl md:text-5xl font-semibold uppercase leading-snug tracking-[0.04em] text-white/10 select-none font-sans">
-                {fullPhrase}
-              </h2>
+        <div className="relative z-20">
+          {/* Interactive Wireframe + Human Reaching Hands + Scroll/Decode/Synced Statement */}
+          <PhilosophyStage />
 
-              {/* Dynamic Super White Typing Overlay */}
-              <h2 className="absolute inset-0 text-3xl md:text-5xl font-semibold uppercase leading-snug tracking-[0.04em] text-studio-fg font-sans text-left bg-transparent pointer-events-none whitespace-pre-wrap">
-                {typedText}
-                <span
-                  className={`inline-block w-[3px] h-[30px] md:h-[44px] bg-studio-fg ml-1 align-middle ${
-                    typedText.length === fullPhrase.length ? "animate-pulse" : ""
-                  }`}
-                ></span>
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 text-left mt-28 border-y border-dashed border-studio-dashed divide-y md:divide-y-0 md:divide-x divide-dashed divide-studio-dashed bg-studio-bg/75 backdrop-blur-[2px]">
+          <div className="max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 text-left mt-24 border-y border-dashed border-studio-dashed divide-y md:divide-y-0 md:divide-x divide-dashed divide-studio-dashed bg-studio-bg/90">
             <div className="space-y-4 p-7 md:p-8 rounded-none">
               <span className="text-[11px] text-studio-muted font-mono tracking-[0.18em] uppercase block">
                 <span>{"// "}</span>
@@ -477,6 +458,7 @@ export default function Home() {
                 ensuring no user is left behind.
               </p>
             </div>
+          </div>
           </div>
         </div>
       </section>
@@ -719,7 +701,7 @@ export default function Home() {
         id="certificates"
       >
         <div className="px-6 lg:px-[80px] max-w-container-max mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16 pb-8 border-b border-dashed border-studio-dashed">
+          <div className="flex justify-between items-end mb-16 pb-8 border-b border-dashed border-studio-dashed">
             <div>
               <span className="text-[11px] text-studio-muted uppercase tracking-[0.24em] font-mono block">
                 Verification
@@ -729,133 +711,53 @@ export default function Home() {
               </h2>
               <span className="studio-accent-bar mt-4" aria-hidden="true" />
             </div>
-            <div className="flex items-center gap-6">
-              <div className="flex items-baseline gap-2.5 border-r border-dashed border-studio-dashed pr-6">
-                <span className="font-pixel text-xl md:text-2xl text-studio-fg">
-                  03
-                </span>
-                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-studio-muted">
-                  INDEXED
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-[11px] text-studio-secondary font-mono uppercase tracking-[0.2em]">
-                <StudioSpecIcon variant="shield" className="w-3.5 h-3.5 text-studio-fg" />
-                <span>CREDLY VERIFIED</span>
-              </div>
+            <div className="hidden md:flex items-center gap-2 text-[11px] text-studio-secondary font-mono uppercase tracking-[0.2em]">
+              <StudioSpecIcon variant="shield" className="w-3.5 h-3.5 text-studio-fg" />
+              <span>CREDLY VERIFIED</span>
             </div>
           </div>
         </div>
 
         <div className="px-6 lg:px-[80px] max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-dashed border-studio-dashed divide-y md:divide-y-0 md:divide-x divide-dashed divide-studio-dashed bg-studio-surface">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {CREDENTIALS.map((item) => (
-              <motion.article
+              <div
                 key={item.id}
-                whileHover={{ y: -2 }}
-                transition={{ duration: 0.2 }}
-                className="group relative flex flex-col justify-between bg-studio-surface hover:bg-studio-surface-hover transition-colors duration-300 rounded-none"
+                className="studio-card p-6 flex flex-col justify-between group"
               >
-                {/* Card Top Index Row */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-dashed border-studio-dashed">
-                  <span className="text-[11px] font-mono text-studio-muted uppercase tracking-[0.18em]">
-                    <span>{"// "}</span>
-                    <span className="font-pixel text-base text-studio-fg mx-0.5">
-                      {item.index}
-                    </span>
-                  </span>
-                  <span className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-studio-fg">
-                    <span
-                      aria-hidden="true"
-                      className="inline-block w-1.5 h-1.5 bg-studio-fg"
-                    />
-                    <span>VERIFIED</span>
-                  </span>
+                {/* Clean Certificate / Badge Thumbnail */}
+                <div className="w-full flex items-center justify-center bg-white py-5 px-4 border border-studio-subtle rounded-none">
+                  <iframe
+                    src={item.badgeUrl}
+                    width="150"
+                    height="270"
+                    title={`${item.title} Badge`}
+                    loading="lazy"
+                    className="block border-0"
+                  />
                 </div>
 
-                {/* Precision Monochrome Blueprint Emblem Stage */}
-                <div className="relative h-[200px] flex items-center justify-center bg-studio-bg border-b border-dashed border-studio-dashed overflow-hidden px-6">
-                  {/* Subtle dashed crosshair axes */}
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 top-1/2 border-t border-dashed border-white/[0.06]"
-                  />
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-y-0 left-1/2 border-l border-dashed border-white/[0.06]"
-                  />
-
-                  <StudioBadgeEmblem
-                    variant={item.emblem}
-                    className="relative z-10 w-32 h-32 text-studio-fg opacity-75 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
-                  />
-
-                  {/* Subtle corner focus label */}
-                  <span className="pointer-events-none absolute bottom-3 left-4 text-[9px] font-mono uppercase tracking-[0.22em] text-studio-muted">
-                    {item.focus}
-                  </span>
-                </div>
-
-                {/* Credential Details & Key-Value Specs */}
-                <div className="p-6 flex flex-col flex-1 justify-between">
+                {/* Simple Title, Issuer & Verification Link */}
+                <div className="mt-5 pt-4 border-t border-dashed border-studio-dashed flex flex-col gap-3">
                   <div>
-                    <h3 className="text-lg font-semibold uppercase tracking-[0.08em] text-studio-fg leading-snug">
+                    <h3 className="text-base font-semibold uppercase tracking-[0.06em] text-studio-fg">
                       {item.title}
                     </h3>
-                    <span className="studio-accent-bar mt-3" aria-hidden="true" />
-
-                    <dl className="mt-6 border-y border-dashed border-studio-dashed divide-y divide-dashed divide-studio-dashed text-[11px] font-mono uppercase tracking-[0.14em]">
-                      <div className="flex items-center justify-between py-2.5 gap-3">
-                        <dt className="inline-flex items-center gap-1.5 text-studio-muted">
-                          <StudioSpecIcon variant="layers" className="w-3 h-3" />
-                          <span>ISSUER</span>
-                        </dt>
-                        <dd className="text-studio-fg text-right truncate">
-                          {item.issuer}
-                        </dd>
-                      </div>
-                      <div className="flex items-center justify-between py-2.5 gap-3">
-                        <dt className="inline-flex items-center gap-1.5 text-studio-muted">
-                          <StudioSpecIcon variant="shield" className="w-3 h-3" />
-                          <span>REGISTRY</span>
-                        </dt>
-                        <dd className="text-studio-fg text-right">
-                          {item.platform}
-                        </dd>
-                      </div>
-                      <div className="flex items-center justify-between py-2.5 gap-3">
-                        <dt className="inline-flex items-center gap-1.5 text-studio-muted">
-                          <StudioSpecIcon variant="code" className="w-3 h-3" />
-                          <span>BADGE ID</span>
-                        </dt>
-                        <dd className="text-studio-secondary text-right">
-                          {item.id.slice(0, 8).toUpperCase()}
-                        </dd>
-                      </div>
-                    </dl>
+                    <p className="text-[11px] font-mono text-studio-muted mt-1 uppercase tracking-[0.14em]">
+                      {item.issuer}
+                    </p>
                   </div>
-
-                  {/* Action Controls */}
-                  <div className="flex items-center gap-2 mt-6">
-                    <a
-                      href={item.verifyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="studio-btn-secondary flex-1 px-3.5 py-2.5 text-[10px]"
-                    >
-                      <span>VERIFY CREDENTIAL</span>
-                      <span>↗</span>
-                    </a>
-                    <button
-                      type="button"
-                      onClick={() => setActiveBadge(item)}
-                      className="px-3 py-2.5 border border-dashed border-studio-border bg-studio-bg text-studio-secondary hover:border-studio-fg hover:text-studio-fg text-[10px] font-mono uppercase tracking-[0.16em] rounded-none transition-colors duration-200 cursor-pointer"
-                      aria-label={`Preview official Credly badge for ${item.title}`}
-                    >
-                      EMBED
-                    </button>
-                  </div>
+                  <a
+                    href={item.verifyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="studio-link inline-flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.18em] text-studio-secondary w-fit"
+                  >
+                    <span>VIEW CREDENTIAL</span>
+                    <span>↗</span>
+                  </a>
                 </div>
-              </motion.article>
+              </div>
             ))}
           </div>
         </div>
@@ -1012,75 +914,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-
-      {/* On-Demand Official Credly Badge Embed Modal */}
-      {activeBadge && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="credly-modal-title"
-          onClick={() => setActiveBadge(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm p-6"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md bg-studio-bg border border-studio-border rounded-none"
-          >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-dashed border-studio-dashed">
-              <div className="flex items-center gap-2.5 text-[11px] font-mono uppercase tracking-[0.18em]">
-                <span className="font-pixel text-sm text-studio-fg">
-                  {activeBadge.index}
-                </span>
-                <span className="text-studio-muted">{"// CREDLY EMBED"}</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveBadge(null)}
-                className="px-2.5 py-1 border border-studio-border text-[10px] font-mono uppercase tracking-[0.18em] text-studio-fg hover:bg-studio-fg hover:text-studio-bg rounded-none transition-colors cursor-pointer"
-              >
-                CLOSE [ESC]
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-6 flex flex-col items-center text-center">
-              <h3
-                id="credly-modal-title"
-                className="text-lg font-semibold uppercase tracking-[0.1em] text-studio-fg"
-              >
-                {activeBadge.title}
-              </h3>
-              <span className="studio-accent-bar mt-3 mb-6" aria-hidden="true" />
-
-              {/* Clean official specimen frame (no mix-blend-screen washout) */}
-              <div className="p-4 bg-white border border-studio-border rounded-none">
-                <iframe
-                  src={activeBadge.badgeUrl}
-                  width="150"
-                  height="270"
-                  title={`${activeBadge.title} Official Credly Badge`}
-                  className="block border-0"
-                />
-              </div>
-
-              <p className="mt-5 text-[10px] font-mono uppercase tracking-[0.18em] text-studio-muted">
-                {activeBadge.issuer} {"//"} ID {activeBadge.id.slice(0, 8).toUpperCase()}
-              </p>
-
-              <a
-                href={activeBadge.verifyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="studio-btn-primary w-full mt-6 px-5 py-3 text-[11px]"
-              >
-                <span>OPEN OFFICIAL CREDLY PAGE</span>
-                <StudioArrowNE className="w-3.5 h-3.5" />
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

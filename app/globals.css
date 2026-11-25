@@ -177,15 +177,10 @@ body {
   text-decoration-color: var(--studio-fg);
 }
 
-/* High-Contrast Monochrome Media Frame (0px Sharp Corners) */
+/* Full-Color Media Frame (0px Sharp Corners) */
 .studio-media {
-  filter: grayscale(100%) contrast(1.25) brightness(0.92);
   border-radius: var(--studio-radius);
-  transition: filter 500ms ease, transform 700ms ease, opacity 400ms ease;
-}
-
-.group:hover .studio-media {
-  filter: grayscale(0%) contrast(1.04) brightness(1);
+  transition: transform 700ms ease, opacity 400ms ease;
 }
 
 /* Custom Interactive Cursor styling */
